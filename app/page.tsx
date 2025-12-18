@@ -11,8 +11,8 @@ export default function Home() {
             <Image
               src="/tsafelabs-logo.png"
               alt="TsafeLabs Logo"
-              width={900}
-              height={900}
+              width={500}
+              height={500}
               priority
               className="mx-auto w-64 sm:w-80 md:w-[420px]"
             />
@@ -25,7 +25,7 @@ export default function Home() {
         {/* Header Text */}
         <div className="space-y-4">
           <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">
-            NCSU • Mock Exam Website
+            TsafeLabs • Mock Exam Website
           </span>
 
           <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">

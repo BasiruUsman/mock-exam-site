@@ -40,8 +40,8 @@ export default function RootLayout({
               priority
               className="h-16 w-auto"
             />
-            <span className="text-2xl sm:text-3xl font-semibold tracking-tight">
-              TsafeLabs
+            <span className="text-4xl font-bold text-red-600">
+              TSAFE LABS TEST
             </span>
           </div>
         </header>

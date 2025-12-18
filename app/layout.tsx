@@ -31,31 +31,31 @@ export default function RootLayout({
       >
         {/* Header */}
         <header className="border-b border-zinc-200 bg-white dark:border-white/10 dark:bg-black">
-          <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-4">
+          <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-5">
             <Image
               src="/tsafelabs-logo.png"
               alt="TsafeLabs Logo"
-              width={40}
-              height={40}
+              width={56}
+              height={56}
               priority
             />
-            <span className="text-lg font-semibold tracking-tight">
+            <span className="text-xl sm:text-2xl font-semibold tracking-tight">
               TsafeLabs
             </span>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="min-h-[calc(100vh-128px)]">{children}</main>
+        <main className="min-h-[calc(100vh-140px)]">{children}</main>
 
         {/* Footer */}
         <footer className="border-t border-zinc-200 bg-white dark:border-white/10 dark:bg-black">
-          <div className="mx-auto max-w-7xl px-6 py-6 text-sm text-zinc-500 dark:text-zinc-400">
-            © {new Date().getFullYear()} TsafeLabs · Innovate · Learn · Grow
+          <div className="mx-auto max-w-7xl px-6 py-8 text-base text-zinc-500 dark:text-zinc-400">
+            © {new Date().getFullYear()} TsafeLabs &nbsp;•&nbsp; Innovate
+            &nbsp;•&nbsp; Learn &nbsp;•&nbsp; Grow
           </div>
         </footer>
       </body>
     </html>
   );
 }
-

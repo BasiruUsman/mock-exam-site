@@ -35,9 +35,10 @@ export default function RootLayout({
             <Image
               src="/tsafelabs-logo.png"
               alt="TsafeLabs Logo"
-              width={56}
-              height={56}
+              width={120}
+              height={120}
               priority
+              className="h-14 w-auto"
             />
             <span className="text-xl sm:text-2xl font-semibold tracking-tight">
               TsafeLabs

@@ -31,20 +31,21 @@ export default function RootLayout({
       >
         {/* Header */}
         <header className="border-b border-zinc-200 bg-white dark:border-white/10 dark:bg-black">
-          <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-5">
+          <div className="mx-auto flex h-24 max-w-7xl items-center gap-5 px-6">
             <Image
               src="/tsafelabs-logo.png"
               alt="TsafeLabs Logo"
-              width={120}
-              height={120}
+              width={140}
+              height={140}
               priority
-              className="h-14 w-auto"
+              className="h-16 w-auto"
             />
-            <span className="text-xl sm:text-2xl font-semibold tracking-tight">
+            <span className="text-2xl sm:text-3xl font-semibold tracking-tight">
               TsafeLabs
             </span>
           </div>
         </header>
+
 
         {/* Page Content */}
         <main className="min-h-[calc(100vh-140px)]">{children}</main>

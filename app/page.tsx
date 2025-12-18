@@ -5,23 +5,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 dark:bg-black dark:text-zinc-50">
       <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-6 py-16 sm:px-12">
-        {/* Hero Logo (visible, 1/3 page feel) */}
-        <div className="mb-10 flex items-center justify-center">
-          <div className="w-full max-w-md">
-            <Image
-              src="/tsafelabs-logo.png"
-              alt="TsafeLabs Logo"
-              width={500}
-              height={500}
-              priority
-              className="mx-auto w-64 sm:w-80 md:w-[420px]"
-            />
-            <p className="mt-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
-              Powered by <span className="font-semibold">TsafeLabs</span>
-            </p>
-          </div>
-        </div>
-
         {/* Header Text */}
         <div className="space-y-4">
           <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">

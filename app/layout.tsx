@@ -38,7 +38,7 @@ export default function RootLayout({
               width={140}
               height={140}
               priority
-              className="h-16 w-auto"
+              className="h-16 w-auto border border-red-500"
             />
             <span className="text-2xl sm:text-3xl font-semibold tracking-tight">
               TsafeLabs

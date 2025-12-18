@@ -31,14 +31,14 @@ export default function RootLayout({
       >
         {/* Header */}
         <header className="border-b border-zinc-200 bg-white dark:border-white/10 dark:bg-black">
-          <div className="mx-auto flex h-24 max-w-7xl items-center gap-5 px-6">
+          <div className="mx-auto flex h-28 max-w-7xl items-center gap-6 px-6">
             <Image
               src="/tsafelabs-logo.png"
               alt="TsafeLabs Logo"
               width={140}
               height={140}
               priority
-              className="h-16 w-auto border border-red-500"
+              className="h-20 w-auto"
             />
             <span className="text-2xl sm:text-3xl font-semibold tracking-tight">
               TsafeLabs

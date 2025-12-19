@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export function generateMetadata(): Metadata {
   return {
-    title: "About • TsafeLabs",
+    title: "About TsafeLabs",
     description:
       "Learn about TsafeLabs—an online exam-practice and learning platform built to help students and professionals prepare with confidence.",
   };
@@ -14,7 +14,7 @@ export default function About() {
       <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:px-12">
         <div className="max-w-3xl">
           <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">
-            TsafeLabs • About
+            TsafeLabs About
           </span>
 
           <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">

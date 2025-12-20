@@ -16,7 +16,7 @@ export default function Home() {
         {/* Header */}
         <div className="flex items-start gap-4">
           <Image
-            src="/logo.png"
+            src="/tsafelabs-logo.png"
             alt="TsafeLabs Logo"
             width={40}
             height={40}

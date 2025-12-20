@@ -1,13 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 
+const subjects = [
+  { name: "Mathematics", href: "/subjects/mathematics" },
+  { name: "English", href: "/subjects/english" },
+  { name: "Chemistry", href: "/subjects/chemistry" },
+  { name: "Biology", href: "/subjects/biology" },
+  { name: "Physics", href: "/subjects/physics" },
+];
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-6 py-16 sm:px-12">
         {/* Header */}
         <div className="flex items-start gap-4">
-          {/* Logo */}
           <Image
             src="/logo.png"
             alt="TsafeLabs Logo"
@@ -17,10 +24,9 @@ export default function Home() {
             priority
           />
 
-          {/* Header Text */}
           <div className="space-y-2">
             <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">
-              TsafeLabs • Mock Exam Website
+              TsafeLabs • SSCE Mock Exam Website
             </span>
 
             <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
@@ -28,9 +34,25 @@ export default function Home() {
             </h1>
 
             <p className="max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-              Practice exams, timed quizzes, and analytics problem sets. Track
-              your progress and build confidence before the real test.
+              Prepare for SSCE with timed practice, past-question style drills,
+              instant feedback, and topic-by-topic revision.
             </p>
+
+            {/* Subject chips */}
+            <div className="mt-4 flex flex-wrap gap-2">
+              {subjects.map((s) => (
+                <Link
+                  key={s.href}
+                  href={s.href}
+                  className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-white/5"
+                >
+                  <span aria-hidden className="text-base">
+                    📘
+                  </span>
+                  {s.name}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -63,30 +85,44 @@ export default function Home() {
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
             <h2 className="text-base font-semibold">Timed Exams</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-              Simulate real test conditions with timers, sections, and scoring.
+              Simulate real SSCE conditions with timers, sections, and scoring.
             </p>
           </div>
 
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-            <h2 className="text-base font-semibold">Question Banks</h2>
+            <h2 className="text-base font-semibold">Subjects</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-              Organize questions by topic: SQL, R, Python, regression, and more.
+              Study Mathematics, English, Chemistry, Biology, and Physics with
+              organized topics and exam-style questions.
             </p>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {subjects.map((s) => (
+                <Link
+                  key={s.name}
+                  href={s.href}
+                  className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-800 hover:bg-zinc-200 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
+                >
+                  {s.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
             <h2 className="text-base font-semibold">Progress Tracking</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-              See accuracy by topic and review missed questions to improve.
+              Track scores by subject and topic, review mistakes, and improve
+              faster.
             </p>
           </div>
         </div>
 
         {/* Footer note */}
         <p className="mt-10 text-sm text-zinc-500 dark:text-zinc-500">
-          Tip: next, create <span className="font-mono">app/exams/page.tsx</span>{" "}
-          and <span className="font-mono">app/practice/page.tsx</span> to match
-          the buttons above.
+          Tip: next, create{" "}
+          <span className="font-mono">app/subjects/[slug]/page.tsx</span> to
+          power the subject links above.
         </p>
       </main>
     </div>

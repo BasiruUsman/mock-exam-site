@@ -3,32 +3,37 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    {/* Header */}
-<div className="flex items-center gap-4">
-    {/* Logo */}
-    <Image
-      src="/logo.png"
-      alt="TsafeLabs Logo"
-      width={40}
-      height={40}
-      className="h-10 w-10 object-contain"
-      priority
-    />
-    {/* Header Text */}
-    <div className="space-y-2">
-        <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">
-          TsafeLabs • Mock Exam Website
-        </span>
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
+      <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-6 py-16 sm:px-12">
+        {/* Header */}
+        <div className="flex items-start gap-4">
+          {/* Logo */}
+          <Image
+            src="/logo.png"
+            alt="TsafeLabs Logo"
+            width={40}
+            height={40}
+            className="h-10 w-10 object-contain"
+            priority
+          />
 
-        <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-        Mock Exam Platform
-        </h1>
+          {/* Header Text */}
+          <div className="space-y-2">
+            <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">
+              TsafeLabs • Mock Exam Website
+            </span>
 
-        <p className="max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-        Practice exams, timed quizzes, and analytics problem sets. Track your progress and build confidence before the real test.
-        </p>
-    </div>
-</div>
+            <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+              Mock Exam Platform
+            </h1>
+
+            <p className="max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+              Practice exams, timed quizzes, and analytics problem sets. Track
+              your progress and build confidence before the real test.
+            </p>
+          </div>
+        </div>
+
         {/* Actions */}
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <Link
@@ -80,8 +85,8 @@ export default function Home() {
         {/* Footer note */}
         <p className="mt-10 text-sm text-zinc-500 dark:text-zinc-500">
           Tip: next, create <span className="font-mono">app/exams/page.tsx</span>{" "}
-          and <span className="font-mono">app/practice/page.tsx</span> to match the
-          buttons above.
+          and <span className="font-mono">app/practice/page.tsx</span> to match
+          the buttons above.
         </p>
       </main>
     </div>

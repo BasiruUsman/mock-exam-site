@@ -2,11 +2,36 @@ import Image from "next/image";
 import Link from "next/link";
 
 const subjects = [
-  { name: "Mathematics", href: "/subjects/mathematics" },
-  { name: "English", href: "/subjects/english" },
-  { name: "Chemistry", href: "/subjects/chemistry" },
-  { name: "Biology", href: "/subjects/biology" },
-  { name: "Physics", href: "/subjects/physics" },
+  {
+    name: "Mathematics",
+    slug: "mathematics",
+    moodleQuizUrl:
+      "https://tsafelabs.moodlecloud.com/mod/quiz/view.php?id=38",
+  },
+  {
+    name: "English",
+    slug: "english",
+    moodleQuizUrl:
+      "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=124",
+  },
+  {
+    name: "Chemistry",
+    slug: "chemistry",
+    moodleQuizUrl:
+      "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=125",
+  },
+  {
+    name: "Biology",
+    slug: "biology",
+    moodleQuizUrl:
+      "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=126",
+  },
+  {
+    name: "Physics",
+    slug: "physics",
+    moodleQuizUrl:
+      "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=127",
+  },
 ];
 
 export default function Home() {

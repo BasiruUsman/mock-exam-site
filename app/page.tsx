@@ -67,13 +67,11 @@ export default function Home() {
             <div className="mt-4 flex flex-wrap gap-2">
               {subjects.map((s) => (
                 <Link
-                  key={s.href}
-                  href={s.href}
+                  key={s.slug}
+                  href={`/subjects/${s.slug}`}
                   className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-white/5"
                 >
-                  <span aria-hidden className="text-base">
-                    📘
-                  </span>
+                  <span aria-hidden className="text-base">📘</span>
                   {s.name}
                 </Link>
               ))}
@@ -124,8 +122,8 @@ export default function Home() {
             <div className="mt-4 flex flex-wrap gap-2">
               {subjects.map((s) => (
                 <Link
-                  key={s.name}
-                  href={s.href}
+                  key={s.slug}
+                  href={`/subjects/${s.slug}`}
                   className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-800 hover:bg-zinc-200 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
                 >
                   {s.name}

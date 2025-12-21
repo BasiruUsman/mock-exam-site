@@ -5,32 +5,27 @@ const subjects = [
   {
     name: "Mathematics",
     slug: "mathematics",
-    moodleQuizUrl:
-      "https://tsafelabs.moodlecloud.com/mod/quiz/view.php?id=38",
+    moodleQuizUrl: "https://tsafelabs.moodlecloud.com/mod/quiz/view.php?id=38",
   },
   {
     name: "English",
     slug: "english",
-    moodleQuizUrl:
-      "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=124",
+    moodleQuizUrl: "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=124",
   },
   {
     name: "Chemistry",
     slug: "chemistry",
-    moodleQuizUrl:
-      "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=125",
+    moodleQuizUrl: "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=125",
   },
   {
     name: "Biology",
     slug: "biology",
-    moodleQuizUrl:
-      "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=126",
+    moodleQuizUrl: "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=126",
   },
   {
     name: "Physics",
     slug: "physics",
-    moodleQuizUrl:
-      "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=127",
+    moodleQuizUrl: "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=127",
   },
 ];
 
@@ -63,19 +58,43 @@ export default function Home() {
               instant feedback, and topic-by-topic revision.
             </p>
 
-            {/* Subject chips */}
+            {/* Subject chips (DIRECT MOODLE LINKS) */}
             <div className="mt-4 flex flex-wrap gap-2">
-              {subjects.map((s) => (
-                <Link
-                  key={s.slug}
-                  href={`/subjects/${s.slug}`}
-                  className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-white/5"
-                >
-                  <span aria-hidden className="text-base">📘</span>
-                  {s.name}
-                </Link>
-              ))}
+              {subjects.map((s) => {
+                const isPlaceholder = s.moodleQuizUrl.includes(
+                  "YOUR-SITE.moodlecloud.com"
+                );
+
+                return (
+                  <a
+                    key={s.slug}
+                    href={isPlaceholder ? undefined : s.moodleQuizUrl}
+                    target={isPlaceholder ? undefined : "_blank"}
+                    rel={isPlaceholder ? undefined : "noopener noreferrer"}
+                    aria-disabled={isPlaceholder}
+                    className={[
+                      "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition-colors",
+                      "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100",
+                      "dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-white/5",
+                      isPlaceholder ? "cursor-not-allowed opacity-60" : "",
+                    ].join(" ")}
+                    onClick={(e) => {
+                      if (isPlaceholder) e.preventDefault();
+                    }}
+                  >
+                    <span aria-hidden className="text-base">
+                      📘
+                    </span>
+                    {s.name}
+                  </a>
+                );
+              })}
             </div>
+
+            {/* Optional: tiny note if some links are placeholders */}
+            <p className="text-xs text-zinc-500 dark:text-zinc-500">
+              Note: subjects marked as “coming soon” will be enabled once their Moodle quiz links are set.
+            </p>
           </div>
         </div>
 
@@ -119,16 +138,34 @@ export default function Home() {
               organized topics and exam-style questions.
             </p>
 
+            {/* Subject pills (DIRECT MOODLE LINKS) */}
             <div className="mt-4 flex flex-wrap gap-2">
-              {subjects.map((s) => (
-                <Link
-                  key={s.slug}
-                  href={`/subjects/${s.slug}`}
-                  className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-800 hover:bg-zinc-200 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
-                >
-                  {s.name}
-                </Link>
-              ))}
+              {subjects.map((s) => {
+                const isPlaceholder = s.moodleQuizUrl.includes(
+                  "YOUR-SITE.moodlecloud.com"
+                );
+
+                return (
+                  <a
+                    key={s.slug}
+                    href={isPlaceholder ? undefined : s.moodleQuizUrl}
+                    target={isPlaceholder ? undefined : "_blank"}
+                    rel={isPlaceholder ? undefined : "noopener noreferrer"}
+                    aria-disabled={isPlaceholder}
+                    className={[
+                      "rounded-full px-3 py-1 text-xs font-medium transition-colors",
+                      "bg-zinc-100 text-zinc-800 hover:bg-zinc-200",
+                      "dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15",
+                      isPlaceholder ? "cursor-not-allowed opacity-60" : "",
+                    ].join(" ")}
+                    onClick={(e) => {
+                      if (isPlaceholder) e.preventDefault();
+                    }}
+                  >
+                    {s.name}
+                  </a>
+                );
+              })}
             </div>
           </div>
 
@@ -143,9 +180,9 @@ export default function Home() {
 
         {/* Footer note */}
         <p className="mt-10 text-sm text-zinc-500 dark:text-zinc-500">
-          Tip: next, create{" "}
-          <span className="font-mono">app/subjects/[slug]/page.tsx</span> to
-          power the subject links above.
+          Tip: add the remaining Moodle quiz links (replace{" "}
+          <span className="font-mono">YOUR-SITE.moodlecloud.com</span>) to enable
+          all subjects.
         </p>
       </main>
     </div>

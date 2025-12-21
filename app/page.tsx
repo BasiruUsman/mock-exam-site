@@ -29,6 +29,10 @@ const subjects = [
   },
 ];
 
+function isPlaceholderUrl(url: string) {
+  return url.includes("YOUR-SITE.moodlecloud.com");
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
@@ -61,26 +65,38 @@ export default function Home() {
             {/* Subject chips (DIRECT MOODLE LINKS) */}
             <div className="mt-4 flex flex-wrap gap-2">
               {subjects.map((s) => {
-                const isPlaceholder = s.moodleQuizUrl.includes(
-                  "YOUR-SITE.moodlecloud.com"
-                );
+                const placeholder = isPlaceholderUrl(s.moodleQuizUrl);
+
+                const baseClass =
+                  "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition-colors";
+                const activeClass =
+                  "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-white/5";
+                const disabledClass =
+                  "border-zinc-200 bg-white text-zinc-700 opacity-60 cursor-not-allowed dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200";
+
+                if (placeholder) {
+                  return (
+                    <span
+                      key={s.slug}
+                      className={`${baseClass} ${disabledClass}`}
+                      title="Coming soon"
+                      aria-disabled="true"
+                    >
+                      <span aria-hidden className="text-base">
+                        📘
+                      </span>
+                      {s.name}
+                    </span>
+                  );
+                }
 
                 return (
                   <a
                     key={s.slug}
-                    href={isPlaceholder ? undefined : s.moodleQuizUrl}
-                    target={isPlaceholder ? undefined : "_blank"}
-                    rel={isPlaceholder ? undefined : "noopener noreferrer"}
-                    aria-disabled={isPlaceholder}
-                    className={[
-                      "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition-colors",
-                      "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100",
-                      "dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-white/5",
-                      isPlaceholder ? "cursor-not-allowed opacity-60" : "",
-                    ].join(" ")}
-                    onClick={(e) => {
-                      if (isPlaceholder) e.preventDefault();
-                    }}
+                    href={s.moodleQuizUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${baseClass} ${activeClass}`}
                   >
                     <span aria-hidden className="text-base">
                       📘
@@ -91,9 +107,9 @@ export default function Home() {
               })}
             </div>
 
-            {/* Optional: tiny note if some links are placeholders */}
             <p className="text-xs text-zinc-500 dark:text-zinc-500">
-              Note: subjects marked as “coming soon” will be enabled once their Moodle quiz links are set.
+              Note: subjects marked as “coming soon” will be enabled once their
+              Moodle quiz links are set.
             </p>
           </div>
         </div>
@@ -141,26 +157,33 @@ export default function Home() {
             {/* Subject pills (DIRECT MOODLE LINKS) */}
             <div className="mt-4 flex flex-wrap gap-2">
               {subjects.map((s) => {
-                const isPlaceholder = s.moodleQuizUrl.includes(
-                  "YOUR-SITE.moodlecloud.com"
-                );
+                const placeholder = isPlaceholderUrl(s.moodleQuizUrl);
+
+                const activeClass =
+                  "rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-800 transition-colors hover:bg-zinc-200 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15";
+                const disabledClass =
+                  "rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-800 opacity-60 cursor-not-allowed dark:bg-white/10 dark:text-zinc-200";
+
+                if (placeholder) {
+                  return (
+                    <span
+                      key={s.slug}
+                      className={disabledClass}
+                      title="Coming soon"
+                      aria-disabled="true"
+                    >
+                      {s.name}
+                    </span>
+                  );
+                }
 
                 return (
                   <a
                     key={s.slug}
-                    href={isPlaceholder ? undefined : s.moodleQuizUrl}
-                    target={isPlaceholder ? undefined : "_blank"}
-                    rel={isPlaceholder ? undefined : "noopener noreferrer"}
-                    aria-disabled={isPlaceholder}
-                    className={[
-                      "rounded-full px-3 py-1 text-xs font-medium transition-colors",
-                      "bg-zinc-100 text-zinc-800 hover:bg-zinc-200",
-                      "dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15",
-                      isPlaceholder ? "cursor-not-allowed opacity-60" : "",
-                    ].join(" ")}
-                    onClick={(e) => {
-                      if (isPlaceholder) e.preventDefault();
-                    }}
+                    href={s.moodleQuizUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={activeClass}
                   >
                     {s.name}
                   </a>
@@ -188,3 +211,4 @@ export default function Home() {
     </div>
   );
 }
+

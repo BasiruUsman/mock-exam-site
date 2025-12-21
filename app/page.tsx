@@ -36,7 +36,7 @@ function isPlaceholderUrl(url: string) {
 export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
-      <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-6 py-16 sm:px-12">
+      <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:px-12">
         {/* Header */}
         <div className="flex items-start gap-4">
           <Image
@@ -48,21 +48,21 @@ export default function Home() {
             priority
           />
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">
-              TsafeLabs • SSCE Mock Exam Website
+              TsafeLabs • SSCE Mock Exam Practice
             </span>
 
             <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-              Mock Exam Platform
+              Practice SSCE the smart way
             </h1>
 
             <p className="max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-              Prepare for SSCE with timed practice, past-question style drills,
-              instant feedback, and topic-by-topic revision.
+              Timed quizzes, exam-style questions, and instant feedback to help
+              you build confidence and improve faster.
             </p>
 
-            {/* Subject chips (DIRECT MOODLE LINKS) */}
+            {/* Primary CTA: Subjects */}
             <div className="mt-4 flex flex-wrap gap-2">
               {subjects.map((s) => {
                 const placeholder = isPlaceholderUrl(s.moodleQuizUrl);
@@ -82,9 +82,7 @@ export default function Home() {
                       title="Coming soon"
                       aria-disabled="true"
                     >
-                      <span aria-hidden className="text-base">
-                        📘
-                      </span>
+                      <span aria-hidden className="text-base">📘</span>
                       {s.name}
                     </span>
                   );
@@ -98,9 +96,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className={`${baseClass} ${activeClass}`}
                   >
-                    <span aria-hidden className="text-base">
-                      📘
-                    </span>
+                    <span aria-hidden className="text-base">📘</span>
                     {s.name}
                   </a>
                 );
@@ -108,107 +104,61 @@ export default function Home() {
             </div>
 
             <p className="text-xs text-zinc-500 dark:text-zinc-500">
-              Note: subjects marked as “coming soon” will be enabled once their
-              Moodle quiz links are set.
-            </p>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Link
-            href="/exams"
-            className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
-          >
-            Browse Exams
-          </Link>
-
-          <Link
-            href="/practice"
-            className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-white/5"
-          >
-            Start Practice
-          </Link>
-
-          <Link
-            href="/about"
-            className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-transparent px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:text-zinc-50 dark:hover:bg-white/5"
-          >
-            About
-          </Link>
-        </div>
-
-        {/* Feature cards */}
-        <div className="mt-14 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-            <h2 className="text-base font-semibold">Timed Exams</h2>
-            <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-              Simulate real SSCE conditions with timers, sections, and scoring.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-            <h2 className="text-base font-semibold">Subjects</h2>
-            <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-              Study Mathematics, English, Chemistry, Biology, and Physics with
-              organized topics and exam-style questions.
+              Subjects marked “coming soon” will be enabled as soon as their
+              Moodle quizzes are added.
             </p>
 
-            {/* Subject pills (DIRECT MOODLE LINKS) */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {subjects.map((s) => {
-                const placeholder = isPlaceholderUrl(s.moodleQuizUrl);
+            {/* Secondary actions (keep only what exists) */}
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/about"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-white/5"
+              >
+                About TsafeLabs
+              </Link>
 
-                const activeClass =
-                  "rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-800 transition-colors hover:bg-zinc-200 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15";
-                const disabledClass =
-                  "rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-800 opacity-60 cursor-not-allowed dark:bg-white/10 dark:text-zinc-200";
-
-                if (placeholder) {
-                  return (
-                    <span
-                      key={s.slug}
-                      className={disabledClass}
-                      title="Coming soon"
-                      aria-disabled="true"
-                    >
-                      {s.name}
-                    </span>
-                  );
-                }
-
-                return (
-                  <a
-                    key={s.slug}
-                    href={s.moodleQuizUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={activeClass}
-                  >
-                    {s.name}
-                  </a>
-                );
-              })}
+              <a
+                href="https://tsafelabs.moodlecloud.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+              >
+                Open Moodle →
+              </a>
             </div>
           </div>
+        </div>
+
+        {/* Feature cards (minimal, no repetition) */}
+        <div className="mt-14 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
+            <h2 className="text-base font-semibold">Timed practice</h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
+              Build speed and accuracy with realistic exam timing.
+            </p>
+          </div>
 
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-            <h2 className="text-base font-semibold">Progress Tracking</h2>
+            <h2 className="text-base font-semibold">Instant feedback</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-              Track scores by subject and topic, review mistakes, and improve
-              faster.
+              Learn faster by reviewing correct answers and mistakes.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
+            <h2 className="text-base font-semibold">Topic-by-topic</h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
+              Focus on weak areas and track improvement over time.
             </p>
           </div>
         </div>
 
-        {/* Footer note */}
+        {/* Footer */}
         <p className="mt-10 text-sm text-zinc-500 dark:text-zinc-500">
-          Tip: add the remaining Moodle quiz links (replace{" "}
-          <span className="font-mono">YOUR-SITE.moodlecloud.com</span>) to enable
-          all subjects.
+          Tip: Replace <span className="font-mono">YOUR-SITE.moodlecloud.com</span>{" "}
+          with your real MoodleCloud quiz links to enable all subjects.
         </p>
       </main>
     </div>
   );
 }
-

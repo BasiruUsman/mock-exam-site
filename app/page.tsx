@@ -1,11 +1,24 @@
 import Image from "next/image";
 import Link from "next/link";
 
+/* =========================
+   Moodle configuration
+========================= */
+const MOODLE_BASE_URL = "https://tsafelabs.moodlecloud.com";
+const SSCE_COURSE_ID = "123"; // ⬅️ REPLACE with your real course ID
+
+const MOODLE_SIGNUP_URL = `${MOODLE_BASE_URL}/login/signup.php`;
+const MOODLE_LOGIN_URL = `${MOODLE_BASE_URL}/login/index.php`;
+const MOODLE_COURSE_URL = `${MOODLE_BASE_URL}/course/view.php?id=${SSCE_COURSE_ID}`;
+
+/* =========================
+   Subjects
+========================= */
 const subjects = [
   {
     name: "Mathematics",
     slug: "mathematics",
-    moodleQuizUrl: "https://tsafelabs.moodlecloud.com/mod/quiz/view.php?id=38",
+    moodleQuizUrl: `${MOODLE_BASE_URL}/mod/quiz/view.php?id=38`,
   },
   {
     name: "English",
@@ -62,7 +75,9 @@ export default function Home() {
               you build confidence and improve faster.
             </p>
 
-            {/* Primary CTA: Subjects */}
+            {/* =========================
+               SUBJECT QUIZ LINKS
+            ========================= */}
             <div className="mt-4 flex flex-wrap gap-2">
               {subjects.map((s) => {
                 const placeholder = isPlaceholderUrl(s.moodleQuizUrl);
@@ -82,8 +97,7 @@ export default function Home() {
                       title="Coming soon"
                       aria-disabled="true"
                     >
-                      <span aria-hidden className="text-base">📘</span>
-                      {s.name}
+                      📘 {s.name}
                     </span>
                   );
                 }
@@ -96,8 +110,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className={`${baseClass} ${activeClass}`}
                   >
-                    <span aria-hidden className="text-base">📘</span>
-                    {s.name}
+                    📘 {s.name}
                   </a>
                 );
               })}
@@ -108,7 +121,9 @@ export default function Home() {
               Moodle quizzes are added.
             </p>
 
-            {/* Secondary actions (keep only what exists) */}
+            {/* =========================
+               AUTH / ENROLMENT CTA
+            ========================= */}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/about"
@@ -118,45 +133,53 @@ export default function Home() {
               </Link>
 
               <a
-                href="https://tsafelabs.moodlecloud.com"
+                href={MOODLE_SIGNUP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-white/5"
+              >
+                Register (Create Account)
+              </a>
+
+              <a
+                href={MOODLE_COURSE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
               >
-                Open Moodle →
+                Login & Join Course →
               </a>
             </div>
           </div>
         </div>
 
-        {/* Feature cards (minimal, no repetition) */}
+        {/* Feature cards */}
         <div className="mt-14 grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
             <h2 className="text-base font-semibold">Timed practice</h2>
-            <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
               Build speed and accuracy with realistic exam timing.
             </p>
           </div>
 
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
             <h2 className="text-base font-semibold">Instant feedback</h2>
-            <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
               Learn faster by reviewing correct answers and mistakes.
             </p>
           </div>
 
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
             <h2 className="text-base font-semibold">Topic-by-topic</h2>
-            <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
               Focus on weak areas and track improvement over time.
             </p>
           </div>
         </div>
 
-        {/* Footer */}
         <p className="mt-10 text-sm text-zinc-500 dark:text-zinc-500">
-          Tip: Replace <span className="font-mono">YOUR-SITE.moodlecloud.com</span>{" "}
-          with your real MoodleCloud quiz links to enable all subjects.
+          Tip: Enable <strong>Self enrolment</strong> in Moodle to allow students
+          to join the SSCE course automatically.
         </p>
       </main>
     </div>

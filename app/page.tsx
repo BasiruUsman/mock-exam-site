@@ -144,7 +144,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
               >
-                Join SSCE course →
+                Join TsafeLabs →
               </a>
 
               {/* Signup (disabled / optional) */}

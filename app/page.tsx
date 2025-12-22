@@ -182,8 +182,7 @@ export default function Home() {
 
             {/* Helpful note */}
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              New users: click <strong>Join SSCE course</strong>. If account creation is enabled,
-              Moodle will prompt you to create one.
+              New users: click <strong>Join TsafeLabs</strong>.
             </p>
           </div>
         </div>
@@ -213,8 +212,7 @@ export default function Home() {
         </div>
 
         <p className="mt-10 text-sm text-zinc-500 dark:text-zinc-500">
-          Tip: Enable <strong>Self enrolment</strong> in Moodle to allow students
-          to join the SSCE course automatically.
+          Tip: Review your <strong>completed exams</strong> to identify your strengths and weaknesses.
         </p>
       </main>
     </div>

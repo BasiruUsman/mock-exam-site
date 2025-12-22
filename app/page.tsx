@@ -5,13 +5,13 @@ import Link from "next/link";
    Moodle configuration
 ========================= */
 const MOODLE_BASE_URL = "https://tsafelabs.moodlecloud.com";
-const SSCE_COURSE_ID = "9"; // ⬅️ REPLACE with your real course ID
+const SSCE_COURSE_ID = "9"; // ✅ Your SSCE course ID
 
-// Auth links
+// Auth links (Signup may be blocked on MoodleCloud)
 const MOODLE_SIGNUP_URL = `${MOODLE_BASE_URL}/login/signup.php`;
 const MOODLE_LOGIN_URL = `${MOODLE_BASE_URL}/login/index.php`;
 
-// Course link (recommended "join course" link)
+// ✅ Best entry point: Course page (Moodle will prompt login/signup if allowed)
 const MOODLE_COURSE_URL = `${MOODLE_BASE_URL}/course/view.php?id=${SSCE_COURSE_ID}`;
 
 /* =========================
@@ -50,6 +50,8 @@ function isPlaceholderUrl(url: string) {
 }
 
 export default function Home() {
+  const signupLikelyBlocked = true; // ✅ MoodleCloud currently blocks /signup.php on your site
+
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:px-12">
@@ -125,7 +127,7 @@ export default function Home() {
             </p>
 
             {/* =========================
-               AUTH / ENROLMENT CTA
+               COURSE ENTRY CTA (BEST PRACTICE FOR MOODLE CLOUD)
             ========================= */}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
@@ -135,17 +137,7 @@ export default function Home() {
                 About TsafeLabs
               </Link>
 
-              {/* ✅ Signup button */}
-              <a
-                href={MOODLE_SIGNUP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-white/5"
-              >
-                Create account (Sign up)
-              </a>
-
-              {/* ✅ Join course button (course page, not login) */}
+              {/* ✅ Primary button: Course page link */}
               <a
                 href={MOODLE_COURSE_URL}
                 target="_blank"
@@ -154,9 +146,29 @@ export default function Home() {
               >
                 Join SSCE course →
               </a>
+
+              {/* Signup (disabled / optional) */}
+              {signupLikelyBlocked ? (
+                <span
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 opacity-60 cursor-not-allowed dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50"
+                  title="Signup is currently disabled on MoodleCloud for this site"
+                  aria-disabled="true"
+                >
+                  Create account (Coming soon)
+                </span>
+              ) : (
+                <a
+                  href={MOODLE_SIGNUP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-white/5"
+                >
+                  Create account (Sign up)
+                </a>
+              )}
             </div>
 
-            {/* Optional: small “already have an account” login link */}
+            {/* Optional login link */}
             <div className="pt-1">
               <a
                 href={MOODLE_LOGIN_URL}
@@ -167,6 +179,12 @@ export default function Home() {
                 Already have an account? Log in
               </a>
             </div>
+
+            {/* Helpful note */}
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              New users: click <strong>Join SSCE course</strong>. If account creation is enabled,
+              Moodle will prompt you to create one.
+            </p>
           </div>
         </div>
 

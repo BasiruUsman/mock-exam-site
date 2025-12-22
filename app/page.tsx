@@ -5,10 +5,13 @@ import Link from "next/link";
    Moodle configuration
 ========================= */
 const MOODLE_BASE_URL = "https://tsafelabs.moodlecloud.com";
-const SSCE_COURSE_ID = "123"; // ⬅️ REPLACE with your real course ID
+const SSCE_COURSE_ID = "9"; // ⬅️ REPLACE with your real course ID
 
+// Auth links
 const MOODLE_SIGNUP_URL = `${MOODLE_BASE_URL}/login/signup.php`;
 const MOODLE_LOGIN_URL = `${MOODLE_BASE_URL}/login/index.php`;
+
+// Course link (recommended "join course" link)
 const MOODLE_COURSE_URL = `${MOODLE_BASE_URL}/course/view.php?id=${SSCE_COURSE_ID}`;
 
 /* =========================
@@ -124,7 +127,7 @@ export default function Home() {
             {/* =========================
                AUTH / ENROLMENT CTA
             ========================= */}
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 href="/about"
                 className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-white/5"
@@ -132,22 +135,36 @@ export default function Home() {
                 About TsafeLabs
               </Link>
 
+              {/* ✅ Signup button */}
               <a
                 href={MOODLE_SIGNUP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-white/5"
               >
-                Register (Create Account)
+                Create account (Sign up)
               </a>
 
+              {/* ✅ Join course button (course page, not login) */}
               <a
                 href={MOODLE_COURSE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
               >
-                Login & Join Course →
+                Join SSCE course →
+              </a>
+            </div>
+
+            {/* Optional: small “already have an account” login link */}
+            <div className="pt-1">
+              <a
+                href={MOODLE_LOGIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-zinc-600 hover:underline dark:text-zinc-400"
+              >
+                Already have an account? Log in
               </a>
             </div>
           </div>

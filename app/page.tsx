@@ -218,3 +218,19 @@ export default function Home() {
     </div>
   );
 }
+{/* =========================
+           CONTACT US
+========================= */}
+<div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
+   <h2 className="text-base font-semibold">Contact Us</h2>
+   <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+      Have questions, feedback, or need support? Reach us at:
+   </p>
+   <a
+      href="mailto:tsafetechlabs@gmail.com"
+      className="mt-3 inline-block text-sm font-medium text-zinc-900 underline underline-offset-4 hover:text-zinc-700 dark:text-zinc-50 dark:hover:text-zinc-300"
+      >
+      tsafetechlabs@gmail.com
+   </a>
+</div>
+

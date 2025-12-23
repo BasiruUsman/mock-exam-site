@@ -11,7 +11,7 @@ const SSCE_COURSE_ID = "9"; // ✅ Your SSCE course ID
 const MOODLE_SIGNUP_URL = `${MOODLE_BASE_URL}/login/signup.php`;
 const MOODLE_LOGIN_URL = `${MOODLE_BASE_URL}/login/index.php`;
 
-// ✅ Best entry point: Course page (Moodle will prompt login/signup if allowed)
+// ✅ Best entry point: Course page
 const MOODLE_COURSE_URL = `${MOODLE_BASE_URL}/course/view.php?id=${SSCE_COURSE_ID}`;
 
 /* =========================
@@ -50,7 +50,7 @@ function isPlaceholderUrl(url: string) {
 }
 
 export default function Home() {
-  const signupLikelyBlocked = true; // ✅ MoodleCloud currently blocks /signup.php on your site
+  const signupLikelyBlocked = true;
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
@@ -80,9 +80,7 @@ export default function Home() {
               you build confidence and improve faster.
             </p>
 
-            {/* =========================
-               SUBJECT QUIZ LINKS
-            ========================= */}
+            {/* Subject links */}
             <div className="mt-4 flex flex-wrap gap-2">
               {subjects.map((s) => {
                 const placeholder = isPlaceholderUrl(s.moodleQuizUrl);
@@ -99,7 +97,6 @@ export default function Home() {
                     <span
                       key={s.slug}
                       className={`${baseClass} ${disabledClass}`}
-                      title="Coming soon"
                       aria-disabled="true"
                     >
                       📘 {s.name}
@@ -126,18 +123,15 @@ export default function Home() {
               Moodle quizzes are added.
             </p>
 
-            {/* =========================
-               COURSE ENTRY CTA (BEST PRACTICE FOR MOODLE CLOUD)
-            ========================= */}
+            {/* CTAs */}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 href="/about"
-                className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-white/5"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:hover:bg-white/5"
               >
                 About TsafeLabs
               </Link>
 
-              {/* ✅ Primary button: Course page link */}
               <a
                 href={MOODLE_COURSE_URL}
                 target="_blank"
@@ -147,13 +141,8 @@ export default function Home() {
                 Join TsafeLabs →
               </a>
 
-              {/* Signup (disabled / optional) */}
               {signupLikelyBlocked ? (
-                <span
-                  className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 opacity-60 cursor-not-allowed dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50"
-                  title="Signup is currently disabled on MoodleCloud for this site"
-                  aria-disabled="true"
-                >
+                <span className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm opacity-60 cursor-not-allowed dark:border-white/10 dark:bg-zinc-950">
                   Create account (Coming soon)
                 </span>
               ) : (
@@ -161,14 +150,13 @@ export default function Home() {
                   href={MOODLE_SIGNUP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-white/5"
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:hover:bg-white/5"
                 >
-                  Create account (Sign up)
+                  Create account
                 </a>
               )}
             </div>
 
-            {/* Optional login link */}
             <div className="pt-1">
               <a
                 href={MOODLE_LOGIN_URL}
@@ -179,58 +167,48 @@ export default function Home() {
                 Already have an account? Log in
               </a>
             </div>
-
-            {/* Helpful note */}
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              New users: click <strong>Join TsafeLabs</strong>.
-            </p>
           </div>
         </div>
 
         {/* Feature cards */}
         <div className="mt-14 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-            <h2 className="text-base font-semibold">Timed practice</h2>
-            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-              Build speed and accuracy with realistic exam timing.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-            <h2 className="text-base font-semibold">Instant feedback</h2>
-            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-              Learn faster by reviewing correct answers and mistakes.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-            <h2 className="text-base font-semibold">Topic-by-topic</h2>
-            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-              Focus on weak areas and track improvement over time.
-            </p>
-          </div>
+          {[
+            ["Timed practice", "Build speed and accuracy with realistic exam timing."],
+            ["Instant feedback", "Learn faster by reviewing correct answers and mistakes."],
+            ["Topic-by-topic", "Focus on weak areas and track improvement over time."],
+          ].map(([title, desc]) => (
+            <div
+              key={title}
+              className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950"
+            >
+              <h2 className="text-base font-semibold">{title}</h2>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {desc}
+              </p>
+            </div>
+          ))}
         </div>
 
         <p className="mt-10 text-sm text-zinc-500 dark:text-zinc-500">
           Tip: Review your <strong>completed exams</strong> to identify your strengths and weaknesses.
         </p>
+
+        {/* =========================
+           CONTACT US
+        ========================= */}
+        <div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
+          <h2 className="text-base font-semibold">Contact Us</h2>
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+            Have questions, feedback, or need support? Reach us at:
+          </p>
+          <a
+            href="mailto:tsafetechlabs@gmail.com"
+            className="mt-3 inline-block text-sm font-medium underline underline-offset-4"
+          >
+            tsafetechlabs@gmail.com
+          </a>
+        </div>
       </main>
     </div>
   );
 }
-{/* =========================
-           CONTACT US
-========================= */}
-<div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-   <h2 className="text-base font-semibold">Contact Us</h2>
-   <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-      Have questions, feedback, or need support? Reach us at:
-   </p>
-   <a
-      href="mailto:tsafetechlabs@gmail.com"
-      className="mt-3 inline-block text-sm font-medium text-zinc-900 underline underline-offset-4 hover:text-zinc-700 dark:text-zinc-50 dark:hover:text-zinc-300"
-      >
-      tsafetechlabs@gmail.com
-   </a>
-</div>
-

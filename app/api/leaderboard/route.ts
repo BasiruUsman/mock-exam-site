@@ -1,16 +1,39 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 type MoodleUser = {
   id: number;
   fullname?: string;
 };
 
+function requireEnv(name: string) {
+  const v = process.env[name];
+  if (!v) throw new Error(`Missing environment variable: ${name}`);
+  return v;
+}
+
+/**
+ * Optional API protection.
+ * If LEADERBOARD_SECRET is set, callers must send:
+ *   Authorization: Bearer <LEADERBOARD_SECRET>
+ * If LEADERBOARD_SECRET is NOT set, the API is public.
+ */
+function enforceAccessControl(req: NextRequest) {
+  const secret = process.env.LEADERBOARD_SECRET;
+  if (!secret) return;
+
+  const auth = req.headers.get("authorization") ?? "";
+  if (auth !== `Bearer ${secret}`) {
+    // Match the exact message you were seeing
+    throw Object.assign(new Error("Access control exception"), { status: 401 });
+  }
+}
+
 async function moodleCall<T>(
   wsfunction: string,
   params: Record<string, string | number>
 ): Promise<T> {
-  const base = process.env.MOODLE_BASE_URL!;
-  const token = process.env.MOODLE_WS_TOKEN!;
+  const base = requireEnv("MOODLE_BASE_URL").replace(/\/$/, "");
+  const token = requireEnv("MOODLE_WS_TOKEN");
   const url = `${base}/webservice/rest/server.php`;
 
   const body = new URLSearchParams({
@@ -21,13 +44,22 @@ async function moodleCall<T>(
   });
 
   const res = await fetch(url, { method: "POST", body });
-  if (!res.ok) throw new Error(`Moodle WS failed: ${res.status}`);
 
-  const json = await res.json();
+  // If Moodle rejects token/permissions, surface a clearer error
+  if (!res.ok) {
+    const txt = await res.text().catch(() => "");
+    throw new Error(`Moodle WS HTTP ${res.status}: ${txt.slice(0, 200)}`);
+  }
+
+  const json: any = await res.json();
 
   // Moodle often returns {exception, errorcode, message}
   if (json?.exception) {
-    throw new Error(json?.message || "Moodle WS exception");
+    const msg =
+      json?.message ||
+      json?.errorcode ||
+      "Moodle WS exception (token/permissions?)";
+    throw new Error(msg);
   }
 
   return json as T;
@@ -38,8 +70,11 @@ function anonName(rank: number) {
   return `Student ${String.fromCharCode(65 + rank)}`;
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    // Optional access control
+    enforceAccessControl(req);
+
     const courseId = Number(process.env.SSCE_COURSE_ID || "9");
 
     // Your quiz IDs (from your links)
@@ -57,7 +92,7 @@ export async function GET() {
       { courseid: courseId }
     );
 
-    // Keep only “real” users (avoid the service account, etc.)
+    // Keep only “real” users (avoid guest/service accounts)
     const users = enrolled.filter((u) => u?.id && u?.id > 1);
 
     // 2) For each quiz, compute top scores by best grade
@@ -98,9 +133,11 @@ export async function GET() {
       { status: 200 }
     );
   } catch (e: any) {
+    const status = typeof e?.status === "number" ? e.status : 500;
+
     return NextResponse.json(
       { error: e?.message || "Failed to build leaderboard" },
-      { status: 500 }
+      { status }
     );
   }
 }

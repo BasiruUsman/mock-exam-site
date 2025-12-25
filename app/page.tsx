@@ -5,53 +5,44 @@ import Link from "next/link";
    Moodle configuration
 ========================= */
 const MOODLE_BASE_URL = "https://tsafelabs.moodlecloud.com";
-const SSCE_COURSE_ID = "9"; // ✅ Your SSCE course ID
+const SSCE_COURSE_ID = "9";
 
-// Auth links (Signup may be blocked on MoodleCloud)
-const MOODLE_SIGNUP_URL = `${MOODLE_BASE_URL}/login/signup.php`;
+// Auth links
 const MOODLE_LOGIN_URL = `${MOODLE_BASE_URL}/login/index.php`;
-
-// ✅ Best entry point: Course page
 const MOODLE_COURSE_URL = `${MOODLE_BASE_URL}/course/view.php?id=${SSCE_COURSE_ID}`;
 
 /* =========================
-   Subjects
+   Subjects (LIVE EXAMS)
 ========================= */
 const subjects = [
   {
     name: "Mathematics",
     slug: "mathematics",
-    moodleQuizUrl: `${MOODLE_BASE_URL}/mod/quiz/view.php?id=38`,
-  },
-  {
-    name: "English",
-    slug: "english",
-    moodleQuizUrl: "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=124",
-  },
-  {
-    name: "Chemistry",
-    slug: "chemistry",
-    moodleQuizUrl: "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=125",
-  },
-  {
-    name: "Biology",
-    slug: "biology",
-    moodleQuizUrl: "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=126",
+    moodleQuizUrl: "https://tsafelabs.moodlecloud.com/mod/quiz/view.php?id=40",
   },
   {
     name: "Physics",
     slug: "physics",
-    moodleQuizUrl: "https://YOUR-SITE.moodlecloud.com/mod/quiz/view.php?id=127",
+    moodleQuizUrl: "https://tsafelabs.moodlecloud.com/mod/quiz/view.php?id=41",
+  },
+  {
+    name: "Chemistry",
+    slug: "chemistry",
+    moodleQuizUrl: "https://tsafelabs.moodlecloud.com/mod/quiz/view.php?id=43",
+  },
+  {
+    name: "English",
+    slug: "english",
+    moodleQuizUrl: "https://tsafelabs.moodlecloud.com/mod/quiz/view.php?id=44",
+  },
+  {
+    name: "Biology",
+    slug: "biology",
+    moodleQuizUrl: "https://tsafelabs.moodlecloud.com/mod/quiz/view.php?id=45",
   },
 ];
 
-function isPlaceholderUrl(url: string) {
-  return url.includes("YOUR-SITE.moodlecloud.com");
-}
-
 export default function Home() {
-  const signupLikelyBlocked = true;
-
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:px-12">
@@ -82,46 +73,18 @@ export default function Home() {
 
             {/* Subject links */}
             <div className="mt-4 flex flex-wrap gap-2">
-              {subjects.map((s) => {
-                const placeholder = isPlaceholderUrl(s.moodleQuizUrl);
-
-                const baseClass =
-                  "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition-colors";
-                const activeClass =
-                  "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-white/5";
-                const disabledClass =
-                  "border-zinc-200 bg-white text-zinc-700 opacity-60 cursor-not-allowed dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200";
-
-                if (placeholder) {
-                  return (
-                    <span
-                      key={s.slug}
-                      className={`${baseClass} ${disabledClass}`}
-                      aria-disabled="true"
-                    >
-                      📘 {s.name}
-                    </span>
-                  );
-                }
-
-                return (
-                  <a
-                    key={s.slug}
-                    href={s.moodleQuizUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`${baseClass} ${activeClass}`}
-                  >
-                    📘 {s.name}
-                  </a>
-                );
-              })}
+              {subjects.map((s) => (
+                <a
+                  key={s.slug}
+                  href={s.moodleQuizUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-white/5"
+                >
+                  📘 {s.name}
+                </a>
+              ))}
             </div>
-
-            <p className="text-xs text-zinc-500 dark:text-zinc-500">
-              Subjects marked “coming soon” will be enabled as soon as their
-              Moodle quizzes are added.
-            </p>
 
             {/* CTAs */}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -140,21 +103,6 @@ export default function Home() {
               >
                 Join TsafeLabs →
               </a>
-
-              {signupLikelyBlocked ? (
-                <span className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm opacity-60 cursor-not-allowed dark:border-white/10 dark:bg-zinc-950">
-                  Create account (Coming soon)
-                </span>
-              ) : (
-                <a
-                  href={MOODLE_SIGNUP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-white px-6 text-sm transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:hover:bg-white/5"
-                >
-                  Create account
-                </a>
-              )}
             </div>
 
             <div className="pt-1">
@@ -193,9 +141,7 @@ export default function Home() {
           Tip: Review your <strong>completed exams</strong> to identify your strengths and weaknesses.
         </p>
 
-        {/* =========================
-           CONTACT US
-        ========================= */}
+        {/* Contact Us */}
         <div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
           <h2 className="text-base font-semibold">Contact Us</h2>
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">

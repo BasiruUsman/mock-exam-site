@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { headers } from "next/headers";
 
 /* =========================
    Moodle configuration
@@ -62,17 +63,19 @@ export default async function Home() {
   let leaderboardData: LeaderboardResponse | null = null;
 
   try {
-    const res = await fetch(`${MOODLE_BASE_URL}/`, { cache: "no-store" }); // no-op ping for warmup (optional)
-    void res;
+    // Build an absolute URL that works on BOTH localhost and Vercel
+    const h = await headers();
+    const host = h.get("host");
+    const proto = h.get("x-forwarded-proto") ?? "https";
 
-    // IMPORTANT: This expects you created: app/api/leaderboard/route.ts
-    // We use a relative URL so it works on localhost + Vercel.
-    const lb = await fetch("https://mock-exam-site-8gqt.vercel.app/api/leaderboard", {
-      // Revalidate every 10 minutes (adjust as needed)
-      next: { revalidate: 600 },
-    });
+    if (host) {
+      const lb = await fetch(`${proto}://${host}/api/leaderboard`, {
+        // Revalidate every 10 minutes (adjust as needed)
+        next: { revalidate: 600 },
+      });
 
-    if (lb.ok) leaderboardData = (await lb.json()) as LeaderboardResponse;
+      if (lb.ok) leaderboardData = (await lb.json()) as LeaderboardResponse;
+    }
   } catch {
     // If it fails, we show a friendly message in the UI.
   }

@@ -83,11 +83,12 @@ export default async function Home() {
     const url = `${baseUrl}/api/leaderboard`;
 
     const lb = await fetch(url, {
-      next: { revalidate: 600 },
-      // IMPORTANT: don’t cache errors forever
-      cache: "no-store",
+       next: { revalidate: 600 },
+       cache: "no-store",
+       headers: {
+          Authorization: `Bearer ${process.env.LEADERBOARD_SECRET ?? ""}`,
+       },
     });
-
     if (!lb.ok) {
       leaderboardError = `Leaderboard API error: ${lb.status} ${lb.statusText}`;
     } else {

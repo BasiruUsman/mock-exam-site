@@ -65,11 +65,19 @@ export default async function Home() {
   try {
     // Build an absolute URL that works on BOTH localhost and Vercel
     const h = await headers();
-    const host = h.get("host");
-    const proto = h.get("x-forwarded-proto") ?? "https";
+
+    // Prefer forwarded host when behind a proxy (Vercel), fall back to host
+    const host = h.get("x-forwarded-host") ?? h.get("host");
+
+    // Prefer forwarded proto, but default correctly for local dev
+    const proto =
+      h.get("x-forwarded-proto") ??
+      (process.env.NODE_ENV === "development" ? "http" : "https");
 
     if (host) {
-      const lb = await fetch(`${proto}://${host}/api/leaderboard`, {
+      const url = `${proto}://${host}/api/leaderboard`;
+
+      const lb = await fetch(url, {
         // Revalidate every 10 minutes (adjust as needed)
         next: { revalidate: 600 },
       });
@@ -158,8 +166,14 @@ export default async function Home() {
         {/* Feature cards */}
         <div className="mt-14 grid gap-4 sm:grid-cols-3">
           {[
-            ["Timed practice", "Build speed and accuracy with realistic exam timing."],
-            ["Instant feedback", "Learn faster by reviewing correct answers and mistakes."],
+            [
+              "Timed practice",
+              "Build speed and accuracy with realistic exam timing.",
+            ],
+            [
+              "Instant feedback",
+              "Learn faster by reviewing correct answers and mistakes.",
+            ],
             ["Topic-by-topic", "Focus on weak areas and track improvement over time."],
           ].map(([title, desc]) => (
             <div
@@ -187,7 +201,8 @@ export default async function Home() {
             <div>
               <h2 className="text-base font-semibold">Results & Leaderboard</h2>
               <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                Live top scores pulled from Moodle (names may be anonymized for privacy).
+                Live top scores pulled from Moodle (names may be anonymized for
+                privacy).
               </p>
             </div>
 
@@ -233,7 +248,10 @@ export default async function Home() {
                         </thead>
                         <tbody>
                           {quiz.top.map((row) => (
-                            <tr key={`${quiz.quizid}-${row.rank}`} className="text-sm">
+                            <tr
+                              key={`${quiz.quizid}-${row.rank}`}
+                              className="text-sm"
+                            >
                               <td className="border-b border-zinc-100 py-3 pr-2 text-zinc-600 dark:border-white/5 dark:text-zinc-300">
                                 #{row.rank}
                               </td>

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { headers } from "next/headers";
 
 /* =========================
    Moodle configuration
@@ -58,34 +57,44 @@ type LeaderboardResponse = {
   resultsByQuiz: { subject: string; quizid: number; top: LeaderboardRow[] }[];
 };
 
+/* =========================
+   Base URL helper
+   (Most reliable on Vercel)
+========================= */
+function getBaseUrl() {
+  // If you set NEXT_PUBLIC_SITE_URL manually, this will use it.
+  // Example: https://your-domain.com
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  // Vercel provides this automatically at runtime
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+
+  // Local dev fallback
+  return "http://localhost:3000";
+}
+
 export default async function Home() {
-  // Fetch real leaderboard from your server route
   let leaderboardData: LeaderboardResponse | null = null;
+  let leaderboardError: string | null = null;
 
   try {
-    // Build an absolute URL that works on BOTH localhost and Vercel
-    const h = await headers();
+    const baseUrl = getBaseUrl();
+    const url = `${baseUrl}/api/leaderboard`;
 
-    // Prefer forwarded host when behind a proxy (Vercel), fall back to host
-    const host = h.get("x-forwarded-host") ?? h.get("host");
+    const lb = await fetch(url, {
+      next: { revalidate: 600 },
+      // IMPORTANT: don’t cache errors forever
+      cache: "no-store",
+    });
 
-    // Prefer forwarded proto, but default correctly for local dev
-    const proto =
-      h.get("x-forwarded-proto") ??
-      (process.env.NODE_ENV === "development" ? "http" : "https");
-
-    if (host) {
-      const url = `${proto}://${host}/api/leaderboard`;
-
-      const lb = await fetch(url, {
-        // Revalidate every 10 minutes (adjust as needed)
-        next: { revalidate: 600 },
-      });
-
-      if (lb.ok) leaderboardData = (await lb.json()) as LeaderboardResponse;
+    if (!lb.ok) {
+      leaderboardError = `Leaderboard API error: ${lb.status} ${lb.statusText}`;
+    } else {
+      leaderboardData = (await lb.json()) as LeaderboardResponse;
     }
-  } catch {
-    // If it fails, we show a friendly message in the UI.
+  } catch (e) {
+    leaderboardError = "Leaderboard fetch failed (network/runtime error).";
   }
 
   return (
@@ -166,14 +175,8 @@ export default async function Home() {
         {/* Feature cards */}
         <div className="mt-14 grid gap-4 sm:grid-cols-3">
           {[
-            [
-              "Timed practice",
-              "Build speed and accuracy with realistic exam timing.",
-            ],
-            [
-              "Instant feedback",
-              "Learn faster by reviewing correct answers and mistakes.",
-            ],
+            ["Timed practice", "Build speed and accuracy with realistic exam timing."],
+            ["Instant feedback", "Learn faster by reviewing correct answers and mistakes."],
             ["Topic-by-topic", "Focus on weak areas and track improvement over time."],
           ].map(([title, desc]) => (
             <div
@@ -181,28 +184,25 @@ export default async function Home() {
               className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950"
             >
               <h2 className="text-base font-semibold">{title}</h2>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                {desc}
-              </p>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{desc}</p>
             </div>
           ))}
         </div>
 
         <p className="mt-10 text-sm text-zinc-500 dark:text-zinc-500">
-          Tip: Review your <strong>completed exams</strong> to identify your
-          strengths and weaknesses.
+          Tip: Review your <strong>completed exams</strong> to identify your strengths
+          and weaknesses.
         </p>
 
         {/* =========================
-           RESULTS / LEADERBOARD (REAL)
+           RESULTS / LEADERBOARD
         ========================= */}
         <div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="text-base font-semibold">Results & Leaderboard</h2>
               <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                Live top scores pulled from Moodle (names may be anonymized for
-                privacy).
+                Live top scores pulled from Moodle (names may be anonymized for privacy).
               </p>
             </div>
 
@@ -217,9 +217,18 @@ export default async function Home() {
           </div>
 
           {!leaderboardData ? (
-            <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
-              Leaderboard is temporarily unavailable. Please try again later.
-            </p>
+            <div className="mt-4 space-y-2">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                Leaderboard is temporarily unavailable. Please try again later.
+              </p>
+
+              {/* Debug line (safe to keep; helps you know if it’s 404/500) */}
+              {leaderboardError ? (
+                <p className="text-xs text-zinc-500 dark:text-zinc-500">
+                  {leaderboardError}
+                </p>
+              ) : null}
+            </div>
           ) : (
             <div className="mt-6 space-y-8">
               {leaderboardData.resultsByQuiz.map((quiz) => (
@@ -248,10 +257,7 @@ export default async function Home() {
                         </thead>
                         <tbody>
                           {quiz.top.map((row) => (
-                            <tr
-                              key={`${quiz.quizid}-${row.rank}`}
-                              className="text-sm"
-                            >
+                            <tr key={`${quiz.quizid}-${row.rank}`} className="text-sm">
                               <td className="border-b border-zinc-100 py-3 pr-2 text-zinc-600 dark:border-white/5 dark:text-zinc-300">
                                 #{row.rank}
                               </td>

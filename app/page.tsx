@@ -43,18 +43,40 @@ const subjects = [
 ];
 
 /* =========================
-   Demo leaderboard data
-   (Replace later with real Moodle data if/when you integrate)
+   Leaderboard types (from /api/leaderboard)
 ========================= */
-const leaderboard = [
-  { name: "Student A", subject: "Mathematics", score: 92, time: "18:40" },
-  { name: "Student B", subject: "English", score: 88, time: "21:10" },
-  { name: "Student C", subject: "Physics", score: 85, time: "24:05" },
-  { name: "Student D", subject: "Chemistry", score: 83, time: "22:50" },
-  { name: "Student E", subject: "Biology", score: 80, time: "25:30" },
-];
+type LeaderboardRow = {
+  rank: number;
+  name: string;
+  subject: string;
+  score: number;
+};
 
-export default function Home() {
+type LeaderboardResponse = {
+  generatedAt: string;
+  resultsByQuiz: { subject: string; quizid: number; top: LeaderboardRow[] }[];
+};
+
+export default async function Home() {
+  // Fetch real leaderboard from your server route
+  let leaderboardData: LeaderboardResponse | null = null;
+
+  try {
+    const res = await fetch(`${MOODLE_BASE_URL}/`, { cache: "no-store" }); // no-op ping for warmup (optional)
+    void res;
+
+    // IMPORTANT: This expects you created: app/api/leaderboard/route.ts
+    // We use a relative URL so it works on localhost + Vercel.
+    const lb = await fetch("https://mock-exam-site-8gqt.vercel.app/api/leaderboard", {
+      // Revalidate every 10 minutes (adjust as needed)
+      next: { revalidate: 600 },
+    });
+
+    if (lb.ok) leaderboardData = (await lb.json()) as LeaderboardResponse;
+  } catch {
+    // If it fails, we show a friendly message in the UI.
+  }
+
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:px-12">
@@ -155,15 +177,14 @@ export default function Home() {
         </p>
 
         {/* =========================
-           RESULTS / LEADERBOARD
+           RESULTS / LEADERBOARD (REAL)
         ========================= */}
         <div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="text-base font-semibold">Results & Leaderboard</h2>
               <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                See top scores and stay motivated. (Demo data for now — will be
-                linked to Moodle results when integration is enabled.)
+                Live top scores pulled from Moodle (names may be anonymized for privacy).
               </p>
             </div>
 
@@ -177,55 +198,64 @@ export default function Home() {
             </a>
           </div>
 
-          <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[520px] border-separate border-spacing-0">
-              <thead>
-                <tr className="text-left">
-                  <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
-                    Rank
-                  </th>
-                  <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
-                    Name
-                  </th>
-                  <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
-                    Subject
-                  </th>
-                  <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
-                    Score
-                  </th>
-                  <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
-                    Time
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboard.map((row, idx) => (
-                  <tr key={`${row.name}-${idx}`} className="text-sm">
-                    <td className="border-b border-zinc-100 py-3 pr-2 text-zinc-600 dark:border-white/5 dark:text-zinc-300">
-                      #{idx + 1}
-                    </td>
-                    <td className="border-b border-zinc-100 py-3 pr-2 font-medium dark:border-white/5">
-                      {row.name}
-                    </td>
-                    <td className="border-b border-zinc-100 py-3 pr-2 text-zinc-700 dark:border-white/5 dark:text-zinc-200">
-                      {row.subject}
-                    </td>
-                    <td className="border-b border-zinc-100 py-3 pr-2 text-zinc-700 dark:border-white/5 dark:text-zinc-200">
-                      {row.score}%
-                    </td>
-                    <td className="border-b border-zinc-100 py-3 text-zinc-700 dark:border-white/5 dark:text-zinc-200">
-                      {row.time}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {!leaderboardData ? (
+            <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
+              Leaderboard is temporarily unavailable. Please try again later.
+            </p>
+          ) : (
+            <div className="mt-6 space-y-8">
+              {leaderboardData.resultsByQuiz.map((quiz) => (
+                <div key={quiz.quizid}>
+                  <h3 className="text-sm font-semibold">{quiz.subject}</h3>
 
-          <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-500">
-            Note: This leaderboard is currently sample data. When Moodle
-            integration is enabled, it can automatically pull real scores and
-            ranks.
+                  {quiz.top.length === 0 ? (
+                    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                      No scores yet.
+                    </p>
+                  ) : (
+                    <div className="mt-3 overflow-x-auto">
+                      <table className="w-full min-w-[420px] border-separate border-spacing-0">
+                        <thead>
+                          <tr className="text-left">
+                            <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
+                              Rank
+                            </th>
+                            <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
+                              Name
+                            </th>
+                            <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
+                              Score
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {quiz.top.map((row) => (
+                            <tr key={`${quiz.quizid}-${row.rank}`} className="text-sm">
+                              <td className="border-b border-zinc-100 py-3 pr-2 text-zinc-600 dark:border-white/5 dark:text-zinc-300">
+                                #{row.rank}
+                              </td>
+                              <td className="border-b border-zinc-100 py-3 pr-2 font-medium dark:border-white/5">
+                                {row.name}
+                              </td>
+                              <td className="border-b border-zinc-100 py-3 text-zinc-700 dark:border-white/5 dark:text-zinc-200">
+                                {row.score}%
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
+            Last updated:{" "}
+            {leaderboardData?.generatedAt
+              ? new Date(leaderboardData.generatedAt).toLocaleString()
+              : "—"}
           </p>
         </div>
 

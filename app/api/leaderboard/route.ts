@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-type MoodleUser = {
-  id: number;
-  fullname?: string;
-};
+type MoodleUser = { id: number; fullname?: string };
 
 function requireEnv(name: string) {
   const v = process.env[name];
@@ -11,20 +8,15 @@ function requireEnv(name: string) {
   return v;
 }
 
-/**
- * Optional API protection.
- * If LEADERBOARD_SECRET is set, callers must send:
- *   Authorization: Bearer <LEADERBOARD_SECRET>
- * If LEADERBOARD_SECRET is NOT set, the API is public.
- */
 function enforceAccessControl(req: NextRequest) {
   const secret = process.env.LEADERBOARD_SECRET;
   if (!secret) return;
 
   const auth = req.headers.get("authorization") ?? "";
   if (auth !== `Bearer ${secret}`) {
-    // Match the exact message you were seeing
-    throw Object.assign(new Error("Access control exception"), { status: 401 });
+    throw Object.assign(new Error("Unauthorized (invalid leaderboard secret)"), {
+      status: 401,
+    });
   }
 }
 
@@ -44,72 +36,71 @@ async function moodleCall<T>(
   });
 
   const res = await fetch(url, { method: "POST", body });
+  const json: any = await res.json().catch(async () => ({ raw: await res.text() }));
 
-  // If Moodle rejects token/permissions, surface a clearer error
   if (!res.ok) {
-    const txt = await res.text().catch(() => "");
-    throw new Error(`Moodle WS HTTP ${res.status}: ${txt.slice(0, 200)}`);
+    throw new Error(`Moodle WS HTTP ${res.status}: ${JSON.stringify(json).slice(0, 300)}`);
   }
-
-  const json: any = await res.json();
-
-  // Moodle often returns {exception, errorcode, message}
   if (json?.exception) {
-    const msg =
-      json?.message ||
-      json?.errorcode ||
-      "Moodle WS exception (token/permissions?)";
-    throw new Error(msg);
+    throw new Error(json?.message || json?.errorcode || "Moodle WS exception");
   }
-
   return json as T;
 }
 
 function anonName(rank: number) {
-  // Student A, Student B, ...
   return `Student ${String.fromCharCode(65 + rank)}`;
 }
 
 export async function GET(req: NextRequest) {
   try {
-    // Optional access control
     enforceAccessControl(req);
 
     const courseId = Number(process.env.SSCE_COURSE_ID || "9");
 
-    // Your quiz IDs (from your links)
-    const quizzes = [
-      { subject: "Mathematics", quizid: 40 },
-      { subject: "Physics", quizid: 41 },
-      { subject: "Chemistry", quizid: 43 },
-      { subject: "English", quizid: 44 },
-      { subject: "Biology", quizid: 45 },
+    // These are *cmid*s from /mod/quiz/view.php?id=...
+    const quizCmids = [
+      { subject: "Mathematics", cmid: 40 },
+      { subject: "Physics", cmid: 41 },
+      { subject: "Chemistry", cmid: 43 },
+      { subject: "English", cmid: 44 },
+      { subject: "Biology", cmid: 45 },
     ];
 
-    // 1) Get enrolled users
+    // Fetch quizzes in the course to map cmid -> quiz id
+    const byCourses = await moodleCall<{
+      quizzes: Array<{ id: number; course: number; cmid?: number; name: string }>;
+    }>("mod_quiz_get_quizzes_by_courses", { courseids: [courseId] as any });
+
+    // Some Moodle versions return an array per course; adjust if needed
+    const quizzes = (byCourses as any)?.quizzes ?? (byCourses as any)?.[0]?.quizzes ?? [];
+    const cmidToQuizId = new Map<number, number>();
+    for (const q of quizzes) {
+      if (typeof q.cmid === "number" && typeof q.id === "number") {
+        cmidToQuizId.set(q.cmid, q.id);
+      }
+    }
+
     const enrolled = await moodleCall<MoodleUser[]>(
       "core_enrol_get_enrolled_users",
       { courseid: courseId }
     );
+    const users = enrolled.filter((u) => u?.id && u.id > 1);
 
-    // Keep only “real” users (avoid guest/service accounts)
-    const users = enrolled.filter((u) => u?.id && u?.id > 1);
-
-    // 2) For each quiz, compute top scores by best grade
     const resultsByQuiz = await Promise.all(
-      quizzes.map(async (q) => {
+      quizCmids.map(async ({ subject, cmid }) => {
+        const quizid = cmidToQuizId.get(cmid);
+        if (!quizid) {
+          return { subject, quizid: -1, top: [] };
+        }
+
+        // WARNING: many calls. Consider limiting users or caching.
         const grades = await Promise.all(
           users.map(async (u) => {
-            // returns {grade: number|null} in many Moodle versions
             const r = await moodleCall<{ grade: number | null }>(
               "mod_quiz_get_user_best_grade",
-              { quizid: q.quizid, userid: u.id }
+              { quizid, userid: u.id }
             );
-
-            return {
-              userid: u.id,
-              grade: typeof r?.grade === "number" ? r.grade : null,
-            };
+            return { userid: u.id, grade: typeof r?.grade === "number" ? r.grade : null };
           })
         );
 
@@ -119,25 +110,18 @@ export async function GET(req: NextRequest) {
           .slice(0, 10)
           .map((g, idx) => ({
             rank: idx + 1,
-            name: anonName(idx), // privacy-safe
-            subject: q.subject,
-            score: Math.round((g.grade ?? 0) * 10) / 10, // 1 decimal
+            name: anonName(idx),
+            subject,
+            score: Math.round((g.grade ?? 0) * 10) / 10,
           }));
 
-        return { subject: q.subject, quizid: q.quizid, top };
+        return { subject, quizid, top };
       })
     );
 
-    return NextResponse.json(
-      { generatedAt: new Date().toISOString(), resultsByQuiz },
-      { status: 200 }
-    );
+    return NextResponse.json({ generatedAt: new Date().toISOString(), resultsByQuiz });
   } catch (e: any) {
     const status = typeof e?.status === "number" ? e.status : 500;
-
-    return NextResponse.json(
-      { error: e?.message || "Failed to build leaderboard" },
-      { status }
-    );
+    return NextResponse.json({ error: e?.message || "Failed to build leaderboard" }, { status });
   }
 }

@@ -11,25 +11,6 @@ function requireEnv(name: string) {
   return v;
 }
 
-/**
- * Optional API protection.
- * If LEADERBOARD_SECRET is set, callers must send:
- *   Authorization: Bearer <LEADERBOARD_SECRET>
- * If LEADERBOARD_SECRET is NOT set, the API is public.
- */
-function enforceAccessControl(req: NextRequest) {
-  const secret = process.env.LEADERBOARD_SECRET;
-  if (!secret) return;
-
-  const auth = req.headers.get("authorization") ?? "";
-  if (auth !== `Bearer ${secret}`) {
-    // Make this message distinct from Moodle's "Access control exception"
-    throw Object.assign(new Error("Unauthorized (invalid leaderboard secret)"), {
-      status: 401,
-    });
-  }
-}
-
 async function moodleCall<T>(
   wsfunction: string,
   params: Record<string, any>
@@ -82,10 +63,8 @@ function anonName(rank: number) {
   return `Student ${String.fromCharCode(65 + rank)}`;
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
-    enforceAccessControl(req);
-
     const courseId = Number(process.env.SSCE_COURSE_ID || "9");
 
     // IMPORTANT:
@@ -109,9 +88,7 @@ export async function GET(req: NextRequest) {
     // Moodle response can vary by version/site:
     // commonly { quizzes: [...] } or [{ id: courseId, quizzes: [...] }]
     const quizzes: Array<{ id: number; cmid?: number; name?: string }> =
-      quizByCourse?.quizzes ??
-      quizByCourse?.[0]?.quizzes ??
-      [];
+      quizByCourse?.quizzes ?? quizByCourse?.[0]?.quizzes ?? [];
 
     const cmidToQuizId = new Map<number, number>();
     for (const q of quizzes) {

@@ -62,15 +62,11 @@ type LeaderboardResponse = {
    (Most reliable on Vercel)
 ========================= */
 function getBaseUrl() {
-  // If you set NEXT_PUBLIC_SITE_URL manually, this will use it.
-  // Example: https://your-domain.com
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit.replace(/\/$/, "");
 
-  // Vercel provides this automatically at runtime
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
 
-  // Local dev fallback
   return "http://localhost:3000";
 }
 
@@ -83,12 +79,13 @@ export default async function Home() {
     const url = `${baseUrl}/api/leaderboard`;
 
     const lb = await fetch(url, {
-       next: { revalidate: 600 },
-       cache: "no-store",
-       headers: {
-          Authorization: `Bearer ${process.env.LEADERBOARD_SECRET ?? ""}`,
-       },
+      next: { revalidate: 600 },
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${process.env.LEADERBOARD_SECRET ?? ""}`,
+      },
     });
+
     if (!lb.ok) {
       leaderboardError = `Leaderboard API error: ${lb.status} ${lb.statusText}`;
     } else {
@@ -176,8 +173,14 @@ export default async function Home() {
         {/* Feature cards */}
         <div className="mt-14 grid gap-4 sm:grid-cols-3">
           {[
-            ["Timed practice", "Build speed and accuracy with realistic exam timing."],
-            ["Instant feedback", "Learn faster by reviewing correct answers and mistakes."],
+            [
+              "Timed practice",
+              "Build speed and accuracy with realistic exam timing.",
+            ],
+            [
+              "Instant feedback",
+              "Learn faster by reviewing correct answers and mistakes.",
+            ],
             ["Topic-by-topic", "Focus on weak areas and track improvement over time."],
           ].map(([title, desc]) => (
             <div
@@ -185,7 +188,9 @@ export default async function Home() {
               className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950"
             >
               <h2 className="text-base font-semibold">{title}</h2>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{desc}</p>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {desc}
+              </p>
             </div>
           ))}
         </div>
@@ -218,17 +223,77 @@ export default async function Home() {
           </div>
 
           {!leaderboardData ? (
-            <div className="mt-4 space-y-2">
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                Leaderboard is temporarily unavailable. Please try again later.
-              </p>
+            // ✅ BEST REPLACEMENT: Improve Your Score panel
+            <div className="mt-6 grid gap-4 sm:grid-cols-[1.1fr_0.9fr]">
+              <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 dark:border-white/10 dark:bg-black/30">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-sm font-semibold">Improve Your Score</h3>
+                    <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                      Leaderboard is unavailable right now — here are smart ways to improve faster.
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">
+                    Study Plan
+                  </span>
+                </div>
 
-              {/* Debug line (safe to keep; helps you know if it’s 404/500) */}
-              {leaderboardError ? (
-                <p className="text-xs text-zinc-500 dark:text-zinc-500">
-                  {leaderboardError}
+                <ul className="mt-4 space-y-3 text-sm">
+                  <li className="flex gap-2">
+                    <span aria-hidden>✅</span>
+                    <span className="text-zinc-700 dark:text-zinc-200">
+                      Review <strong>completed exams</strong> to identify your weak topics.
+                    </span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span aria-hidden>⏱️</span>
+                    <span className="text-zinc-700 dark:text-zinc-200">
+                      Practice under <strong>timed conditions</strong> to build speed.
+                    </span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span aria-hidden>❌</span>
+                    <span className="text-zinc-700 dark:text-zinc-200">
+                      Focus revision on <strong>frequent mistakes</strong> (don’t skip them).
+                    </span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span aria-hidden>🔁</span>
+                    <span className="text-zinc-700 dark:text-zinc-200">
+                      Retake the quiz after revision to confirm improvement.
+                    </span>
+                  </li>
+                </ul>
+
+                {/* Debug line (safe to keep; helps you know if it’s 404/500/401) */}
+                {leaderboardError ? (
+                  <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
+                    {leaderboardError}
+                  </p>
+                ) : null}
+              </div>
+
+              {/* Optional image card (drop an image into /public/study-tip.png) */}
+              <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-white/10 dark:bg-zinc-950">
+                <h3 className="text-sm font-semibold">Quick Reminder</h3>
+                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                  Small consistent practice beats long cramming.
                 </p>
-              ) : null}
+
+                <div className="mt-4 overflow-hidden rounded-xl border border-zinc-200 dark:border-white/10">
+                  <Image
+                    src="/study-tip.png"
+                    alt="Study tips"
+                    width={800}
+                    height={500}
+                    className="h-40 w-full object-cover"
+                  />
+                </div>
+
+                <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-500">
+                  Add your image at <strong>/public/study-tip.png</strong> (or remove this card).
+                </p>
+              </div>
             </div>
           ) : (
             <div className="mt-6 space-y-8">

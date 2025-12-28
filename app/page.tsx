@@ -59,7 +59,7 @@ export default async function Home() {
 
           <div className="space-y-3">
             <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">
-              TsafeLabs • SSCE Mock Exam Practice
+              TsafeLabs • SSCE Mock Exams – Practice & Improve
             </span>
 
             <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">

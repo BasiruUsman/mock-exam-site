@@ -201,156 +201,45 @@ export default async function Home() {
         </p>
 
         {/* =========================
-           RESULTS / LEADERBOARD
+        STUDY IMPROVEMENT PANEL
         ========================= */}
-        <div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="text-base font-semibold">Results & Leaderboard</h2>
-              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                Live top scores pulled from Moodle (names may be anonymized for privacy).
-              </p>
-            </div>
-
-            <a
-              href={MOODLE_COURSE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-200 bg-white px-4 text-sm font-medium transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950 dark:hover:bg-white/5"
-            >
-              View your results in Moodle →
-            </a>
-          </div>
-
-          {!leaderboardData ? (
-            // ✅ BEST REPLACEMENT: Improve Your Score panel
-            <div className="mt-6 grid gap-4 sm:grid-cols-[1.1fr_0.9fr]">
-              <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 dark:border-white/10 dark:bg-black/30">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-sm font-semibold">Improve Your Score</h3>
-                    <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                      Leaderboard is unavailable right now — here are smart ways to improve faster.
-                    </p>
-                  </div>
-                  <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs text-zinc-700 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-300">
-                    Study Plan
+         <div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
+            <h2 className="text-base font-semibold">Improve Your Score</h2>
+            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+               Follow these proven steps to perform better in your next SSCE practice exam.
+            </p>
+            <ul className="mt-5 space-y-3 text-sm">
+               <li className="flex gap-2">
+                  <span aria-hidden>✅</span>
+                  <span className="text-zinc-700 dark:text-zinc-200">
+                     Review your <strong>completed exams</strong> to identify weak topics.
                   </span>
-                </div>
-
-                <ul className="mt-4 space-y-3 text-sm">
-                  <li className="flex gap-2">
-                    <span aria-hidden>✅</span>
-                    <span className="text-zinc-700 dark:text-zinc-200">
-                      Review <strong>completed exams</strong> to identify your weak topics.
-                    </span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span aria-hidden>⏱️</span>
-                    <span className="text-zinc-700 dark:text-zinc-200">
-                      Practice under <strong>timed conditions</strong> to build speed.
-                    </span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span aria-hidden>❌</span>
-                    <span className="text-zinc-700 dark:text-zinc-200">
-                      Focus revision on <strong>frequent mistakes</strong> (don’t skip them).
-                    </span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span aria-hidden>🔁</span>
-                    <span className="text-zinc-700 dark:text-zinc-200">
-                      Retake the quiz after revision to confirm improvement.
-                    </span>
-                  </li>
-                </ul>
-
-                {/* Debug line (safe to keep; helps you know if it’s 404/500/401) */}
-                {leaderboardError ? (
-                  <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
-                    {leaderboardError}
-                  </p>
-                ) : null}
-              </div>
-
-              {/* Optional image card (drop an image into /public/study-tip.png) */}
-              <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-white/10 dark:bg-zinc-950">
-                <h3 className="text-sm font-semibold">Quick Reminder</h3>
-                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                  Small consistent practice beats long cramming.
-                </p>
-
-                <div className="mt-4 overflow-hidden rounded-xl border border-zinc-200 dark:border-white/10">
-                  <Image
-                    src="/study-tip.png"
-                    alt="Study tips"
-                    width={800}
-                    height={500}
-                    className="h-40 w-full object-cover"
-                  />
-                </div>
-
-                <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-500">
-                  Add your image at <strong>/public/study-tip.png</strong> (or remove this card).
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-6 space-y-8">
-              {leaderboardData.resultsByQuiz.map((quiz) => (
-                <div key={quiz.quizid}>
-                  <h3 className="text-sm font-semibold">{quiz.subject}</h3>
-
-                  {quiz.top.length === 0 ? (
-                    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                      No scores yet.
-                    </p>
-                  ) : (
-                    <div className="mt-3 overflow-x-auto">
-                      <table className="w-full min-w-[420px] border-separate border-spacing-0">
-                        <thead>
-                          <tr className="text-left">
-                            <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
-                              Rank
-                            </th>
-                            <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
-                              Name
-                            </th>
-                            <th className="border-b border-zinc-200 pb-2 text-xs font-semibold text-zinc-500 dark:border-white/10 dark:text-zinc-400">
-                              Score
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {quiz.top.map((row) => (
-                            <tr key={`${quiz.quizid}-${row.rank}`} className="text-sm">
-                              <td className="border-b border-zinc-100 py-3 pr-2 text-zinc-600 dark:border-white/5 dark:text-zinc-300">
-                                #{row.rank}
-                              </td>
-                              <td className="border-b border-zinc-100 py-3 pr-2 font-medium dark:border-white/5">
-                                {row.name}
-                              </td>
-                              <td className="border-b border-zinc-100 py-3 text-zinc-700 dark:border-white/5 dark:text-zinc-200">
-                                {row.score}%
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
-            Last updated:{" "}
-            {leaderboardData?.generatedAt
-              ? new Date(leaderboardData.generatedAt).toLocaleString()
-              : "—"}
-          </p>
-        </div>
+               </li>
+               <li className="flex gap-2">
+                  <span aria-hidden>⏱️</span>
+                  <span className="text-zinc-700 dark:text-zinc-200">
+                     Practice under <strong>timed conditions</strong> to build exam speed.
+                  </span>
+               </li>
+               <li className="flex gap-2">
+                  <span aria-hidden>❌</span>
+                  <span className="text-zinc-700 dark:text-zinc-200">
+                     Focus revision on <strong>questions you missed</strong>, not just the ones you passed.
+                  </span>
+               </li>
+               <li className="flex gap-2">
+                  <span aria-hidden>🔁</span>
+                  <span className="text-zinc-700 dark:text-zinc-200">
+                     Retake quizzes after revision to confirm real improvement.
+                  </span>
+               </li>
+            </ul>
+            {leaderboardError ? (
+       <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
+          {leaderboardError}
+       </p>
+    ) : null}
+         </div>
 
         {/* =========================
            CONTACT US

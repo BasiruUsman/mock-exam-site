@@ -42,59 +42,7 @@ const subjects = [
   },
 ];
 
-/* =========================
-   Leaderboard types (from /api/leaderboard)
-========================= */
-type LeaderboardRow = {
-  rank: number;
-  name: string;
-  subject: string;
-  score: number;
-};
-
-type LeaderboardResponse = {
-  generatedAt: string;
-  resultsByQuiz: { subject: string; quizid: number; top: LeaderboardRow[] }[];
-};
-
-/* =========================
-   Base URL helper
-   (Most reliable on Vercel)
-========================= */
-function getBaseUrl() {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return explicit.replace(/\/$/, "");
-
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-
-  return "http://localhost:3000";
-}
-
 export default async function Home() {
-  let leaderboardData: LeaderboardResponse | null = null;
-  let leaderboardError: string | null = null;
-
-  try {
-    const baseUrl = getBaseUrl();
-    const url = `${baseUrl}/api/leaderboard`;
-
-    const lb = await fetch(url, {
-      next: { revalidate: 600 },
-      cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${process.env.LEADERBOARD_SECRET ?? ""}`,
-      },
-    });
-
-    if (!lb.ok) {
-      leaderboardError = `Leaderboard API error: ${lb.status} ${lb.statusText}`;
-    } else {
-      leaderboardData = (await lb.json()) as LeaderboardResponse;
-    }
-  } catch (e) {
-    leaderboardError = "Leaderboard fetch failed (network/runtime error).";
-  }
-
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:px-12">
@@ -173,14 +121,8 @@ export default async function Home() {
         {/* Feature cards */}
         <div className="mt-14 grid gap-4 sm:grid-cols-3">
           {[
-            [
-              "Timed practice",
-              "Build speed and accuracy with realistic exam timing.",
-            ],
-            [
-              "Instant feedback",
-              "Learn faster by reviewing correct answers and mistakes.",
-            ],
+            ["Timed practice", "Build speed and accuracy with realistic exam timing."],
+            ["Instant feedback", "Learn faster by reviewing correct answers and mistakes."],
             ["Topic-by-topic", "Focus on weak areas and track improvement over time."],
           ].map(([title, desc]) => (
             <div
@@ -188,9 +130,7 @@ export default async function Home() {
               className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950"
             >
               <h2 className="text-base font-semibold">{title}</h2>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                {desc}
-              </p>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{desc}</p>
             </div>
           ))}
         </div>
@@ -201,45 +141,41 @@ export default async function Home() {
         </p>
 
         {/* =========================
-        STUDY IMPROVEMENT PANEL
+           IMPROVE YOUR SCORE (replaces leaderboard)
         ========================= */}
-         <div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
-            <h2 className="text-base font-semibold">Improve Your Score</h2>
-            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-               Follow these proven steps to perform better in your next SSCE practice exam.
-            </p>
-            <ul className="mt-5 space-y-3 text-sm">
-               <li className="flex gap-2">
-                  <span aria-hidden>✅</span>
-                  <span className="text-zinc-700 dark:text-zinc-200">
-                     Review your <strong>completed exams</strong> to identify weak topics.
-                  </span>
-               </li>
-               <li className="flex gap-2">
-                  <span aria-hidden>⏱️</span>
-                  <span className="text-zinc-700 dark:text-zinc-200">
-                     Practice under <strong>timed conditions</strong> to build exam speed.
-                  </span>
-               </li>
-               <li className="flex gap-2">
-                  <span aria-hidden>❌</span>
-                  <span className="text-zinc-700 dark:text-zinc-200">
-                     Focus revision on <strong>questions you missed</strong>, not just the ones you passed.
-                  </span>
-               </li>
-               <li className="flex gap-2">
-                  <span aria-hidden>🔁</span>
-                  <span className="text-zinc-700 dark:text-zinc-200">
-                     Retake quizzes after revision to confirm real improvement.
-                  </span>
-               </li>
-            </ul>
-            {leaderboardError ? (
-       <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
-          {leaderboardError}
-       </p>
-    ) : null}
-         </div>
+        <div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-950">
+          <h2 className="text-base font-semibold">Improve Your Score</h2>
+          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+            Follow these proven steps to perform better in your next SSCE practice exam.
+          </p>
+
+          <ul className="mt-5 space-y-3 text-sm">
+            <li className="flex gap-2">
+              <span aria-hidden>✅</span>
+              <span className="text-zinc-700 dark:text-zinc-200">
+                Review your <strong>completed exams</strong> to identify weak topics.
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span aria-hidden>⏱️</span>
+              <span className="text-zinc-700 dark:text-zinc-200">
+                Practice under <strong>timed conditions</strong> to build exam speed.
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span aria-hidden>❌</span>
+              <span className="text-zinc-700 dark:text-zinc-200">
+                Focus revision on <strong>questions you missed</strong>, not just the ones you passed.
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span aria-hidden>🔁</span>
+              <span className="text-zinc-700 dark:text-zinc-200">
+                Retake quizzes after revision to confirm real improvement.
+              </span>
+            </li>
+          </ul>
+        </div>
 
         {/* =========================
            CONTACT US
@@ -260,3 +196,4 @@ export default async function Home() {
     </div>
   );
 }
+
